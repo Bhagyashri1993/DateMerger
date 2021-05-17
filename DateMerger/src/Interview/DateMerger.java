@@ -12,7 +12,7 @@ public class DateMerger {
         List<DateRange> dateRanges = new ArrayList<>();
         dateRanges.add(new DateRange(LocalDate.of(2014, 1, 1), LocalDate.of(2014, 1, 30)));
         dateRanges.add(new DateRange(LocalDate.of(2014, 1, 15), LocalDate.of(2014, 2, 15)));
-        dateRanges.add(new DateRange(LocalDate.of(2014, 3, 10), LocalDate.of(2014, 4, 15)));
+        dateRanges.add(new DateRange(LocalDate.of(2014, 3, 10), LocalDate.of(2014, 4, 10)));
         dateRanges.add(new DateRange(LocalDate.of(2014, 4, 10), LocalDate.of(2014, 5, 15)));
         
         System.out.println("==============INPUT====================");
@@ -30,9 +30,10 @@ public class DateMerger {
         for(DateRange mDate : mergedDates) {
             
             System.out.println("StartDate : "+mDate.getStartDate() + " And EndDate : " +mDate.getEndDate());
+            
         } 
     }
-
+    
     private static List<DateRange> mergeDates(List<DateRange> dateRanges) {
         // TODO Auto-generated method stub
         List<DateRange> mergedDateRange = new ArrayList<>();
@@ -41,27 +42,34 @@ public class DateMerger {
             LocalDate startDate = date.getStartDate();
             LocalDate endDate = date.getEndDate();
             
+            int startMonth=startDate.getMonthValue();
+            boolean isClear = false;
+            
             if(startDate.isBefore(endDate)) {
-                for(DateRange mergedDate : mergedDateRange){
-                    LocalDate startDateM = mergedDate.getStartDate();
-                    LocalDate endDateM = mergedDate.getEndDate();
-                    
-                    if(startDate.isBefore(endDateM)) {
-                        startDate =  startDateM;
-                        
-                    }
-                    if(endDate.isBefore(endDateM)) {
-                        endDate = endDateM;
-                    }
-                }
-            }else {
-                mergedDateRange.add(new DateRange(startDate, endDate));
+            	for(DateRange mergeDate: mergedDateRange) {
+            		 LocalDate startDateM =mergeDate.getStartDate();
+            		 LocalDate endDateM =mergeDate.getEndDate();
+            		 
+            		 int endMonth = endDateM.getMonthValue();
+            		 
+            		 if(startDate.isBefore(endDate) && startMonth == endMonth) {
+            			 startDate = startDateM;
+            			 isClear = true;
+            		 }
+            		 if(endDate.isBefore(endDate)) {
+            			 endDate =endDateM;
+            		 }           		 
+            	}          	
             }
-            mergedDateRange.clear();
+            else {
+            	mergedDateRange.add(new DateRange(startDate, endDate));
+            }
+            if(isClear) {
+            	int index = mergedDateRange.size()-1;
+            	mergedDateRange.remove(index);
+            }
             mergedDateRange.add(new DateRange(startDate, endDate));
         }
-        
-        return mergedDateRange;
+		return mergedDateRange;
+		}
     }
-
-}
